@@ -1,22 +1,15 @@
 package rest
+
 import(
    "time"
    "encoding/json"
    "strconv"
    "strings"
    "net/http"
+   "server/app"
    "server/db"
 )
 
-type AppFacade struct {
-   DB: db.Database
-}
-
-//
-type RestHandlerFunc func(http.ResponseWriter, *http.Request, *AppFacade)
-
-type Restful struct {
-   Id string `datastore:"-" json:"id,omitempty`
-   Timestamp time.Time `datastore:"" json:"timestap,omitempty"`
-   LastModified time.Time `datastore:"" json:"lastModified"`
-}
+// This should behave like the http.HandlerFunc but it includes an AppFacade
+// argument that provides access to the app's components.
+type RestHandlerFunc func(http.ResponseWriter, *http.Request, *app.AppFacade)

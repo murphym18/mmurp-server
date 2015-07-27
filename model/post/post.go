@@ -1,7 +1,8 @@
-package model
+package post
 
 import (
    "time"
+   "encoding/json"
 )
 
 type Post struct {
@@ -20,4 +21,18 @@ func (post *Post) Touch() {
    if post.Timestap.IsZero() {
       post.Timestap = post.LastModified
    }
+}
+
+func (v *Post) ExportJSON() {
+   b, _ := json.Marshal(v)
+   return b
+}
+
+func (v *Post) ImportJSON(b []byte) {
+   v* = Post{}
+   _ := json.Unmarshal(b, v)
+}
+
+func (v *Post) PatchJSON(b []byte) {
+   _ := json.Unmarshal(b, v)
 }

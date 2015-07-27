@@ -1,3 +1,5 @@
+package model
+
 // Models can be stored in the database and exported as JSON. Anything that can
 // do is a model. Post and Comment.
 type Model interface {
