@@ -6,10 +6,21 @@ import(
    "strconv"
    "strings"
    "net/http"
-   "server/app"
-   "server/db"
+   "../app"
+   "../db"
 )
 
-// This should behave like the http.HandlerFunc but it includes an AppFacade
-// argument that provides access to the app's components.
-type RestHandlerFunc func(http.ResponseWriter, *http.Request, *app.AppFacade)
+type RestHandler interface {
+   InjectDB(db.Database)
+   InjectLogger(app.Log)
+   ServeHTTP(ResponseWriter, *Request)
+}
+
+func init() {
+      http.HandleFunc("/api/", )
+      http.HandleFunc("/posts/sign", sign)
+}
+
+func DispatchApiRequest(ResponseWriter, *Request){
+
+}
