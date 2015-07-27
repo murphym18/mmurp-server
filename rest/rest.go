@@ -9,7 +9,7 @@ import(
 )
 
 type AppFacade struct {
-   DB: db.DataSource
+   DB: db.Database
 }
 
 //

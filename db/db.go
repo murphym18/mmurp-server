@@ -34,10 +34,12 @@ type DataStore interface {
    CreateComment(*model.PostData, *model.CommentData) *model.Comment
 
    // Saves a post to the database. This is the same as deleting the post,
-   // and creating a new post from the parameter argument.
+   // and creating a new post from parameter. Note the the post should have a
+   // valid ID.
    SavePost(*mode.PostData)
 
-   // Saves a comment to the database (behavior like SavePost).
+   // Saves a comment to the database and behaves like SavePost. Note the the
+   //comment should have a valid ID.
    SaveComment(*model.CommentData)
 
    // Deletes a post permanently. This also deletes its comments.
@@ -45,15 +47,19 @@ type DataStore interface {
 
    // Deletes a comment permanently.
    DeleteComment(*model.CommentData)
-}
+
 
 type Database interface {
    DataSource
    DataStore
 }
 
-var providers = make(map[string]driver.Driver)
+var providers = make(map[string]provider.DataProvider)
 
-func GetInstance(name string) Database {
+func RegisterProvider(name string, dao provider.DataProvider) Database {
+   providers[name] = dao
+}
 
+func GetInstance(name string, config interface{}) Database {
+   return providers[name].get(config)
 }
