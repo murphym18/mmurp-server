@@ -50,7 +50,7 @@ type DataStore interface {
    DeleteComment(*model.Comment)
 }
 
-type Database struct {
+type Database interface {
    DataSource
    DataStore
 }
