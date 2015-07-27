@@ -6,8 +6,8 @@ import (
 )
 
 type Post struct {
-   Id string `json:"id,omitempty`
-   Author string `json:"author,omitempty`
+   Id string `json:"id,omitempty"`
+   Author string `json:"author,omitempty"`
    URL string `json:"url,omitempty"`
    Public bool `json:"-"`
    Title string `json:"title,omitempty"`
@@ -17,22 +17,23 @@ type Post struct {
 }
 
 func (post *Post) Touch() {
-   post.LastModified = time.TimeNow()
-   if post.Timestap.IsZero() {
-      post.Timestap = post.LastModified
+   post.LastModified = time.Now()
+   if post.Timestamp.IsZero() {
+      post.Timestamp = post.LastModified
    }
 }
 
-func (v *Post) ExportJSON() {
+func (v *Post) ExportJSON() []byte {
    b, _ := json.Marshal(v)
    return b
 }
 
 func (v *Post) ImportJSON(b []byte) {
-   v* = Post{}
-   _ := json.Unmarshal(b, v)
+   tmp := &Post{}
+   _ = json.Unmarshal(b, tmp)
+   v = tmp
 }
 
 func (v *Post) PatchJSON(b []byte) {
-   _ := json.Unmarshal(b, v)
+   _ = json.Unmarshal(b, v)
 }
