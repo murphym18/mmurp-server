@@ -1,7 +1,10 @@
 package provider
 
-import "server/db"
-
 type DataProvider interface {
-   Get(config interface{})(db.Database, error)
+   Get(config interface{})(Database, error)
+}
+
+type Database struct {
+   DataSource
+   DataStore
 }
