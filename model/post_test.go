@@ -1,14 +1,14 @@
-package post_test
+package model_test
 
 import (
    "encoding/json"
    "fmt"
    "testing"
-   "../post"
+   "../model"
 )
 
 func TestTouch(t *testing.T) {
-   p := &post.Post{}
+   p := &model.Post{}
    if !p.Timestamp.IsZero() {
       t.Errorf("Didn't start with zero value\n")
       t.Fail()
@@ -21,7 +21,7 @@ func TestTouch(t *testing.T) {
 }
 
 func TestExportJSON(t *testing.T) {
-   original := &post.Post{Title: "Test Post", Author: "Me"}
+   original := &model.Post{Title: "Test Post", Author: "Me"}
    b := original.ExportJSON()
    m := make(map[string]interface{})
 
@@ -38,8 +38,8 @@ func TestExportJSON(t *testing.T) {
 }
 
 func TestImportJSON(t *testing.T) {
-   p1 := &post.Post{Title: "Test Post", Author: "Me"}
-   p2 := &post.Post{Title: "something", Author: "Not Me", URL: "/something"}
+   p1 := &model.Post{Title: "Test Post", Author: "Me"}
+   p2 := &model.Post{Title: "something", Author: "Not Me", URL: "/something"}
    b := p1.ExportJSON()
    if fmt.Sprintf("%s", p1) == fmt.Sprintf("%s", p2) {
       t.Errorf("'%s' should equal '%s'\n", p1, p2)
@@ -53,9 +53,9 @@ func TestImportJSON(t *testing.T) {
 }
 
 func TestPatchJSON(t *testing.T) {
-   original := &post.Post{Title: "Test Post", Author: "Me"}
-   result := &post.Post{Title: "Test Post", Author: "Me", URL: "/something"}
-   patch := &post.Post{URL: "/something"}
+   original := &model.Post{Title: "Test Post", Author: "Me"}
+   result := &model.Post{Title: "Test Post", Author: "Me", URL: "/something"}
+   patch := &model.Post{URL: "/something"}
    b := patch.ExportJSON()
    original.PatchJSON(b)
    if fmt.Sprintf("%s", original) != fmt.Sprintf("%s", result) {

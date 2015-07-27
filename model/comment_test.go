@@ -1,14 +1,14 @@
-package comment_test
+package model_test
 
 import (
    "encoding/json"
    "fmt"
    "testing"
-   "../comment"
+   "../model"
 )
 
-func TestTouch(t *testing.T) {
-   p := &comment.Comment{}
+func TestCommentTouch(t *testing.T) {
+   p := &model.Comment{}
    if !p.Timestamp.IsZero() {
       t.Errorf("Didn't start with zero value\n")
       t.Fail()
@@ -20,8 +20,8 @@ func TestTouch(t *testing.T) {
    }
 }
 
-func TestExportJSON(t *testing.T) {
-   original := &comment.Comment{Comment: "Test Post", Author: "Me"}
+func TestCommentExportJSON(t *testing.T) {
+   original := &model.Comment{Comment: "Test Post", Author: "Me"}
    b := original.ExportJSON()
    m := make(map[string]interface{})
 
@@ -37,9 +37,9 @@ func TestExportJSON(t *testing.T) {
    }
 }
 
-func TestImportJSON(t *testing.T) {
-   p1 := &comment.Comment{Comment: "Test Post", Author: "Me"}
-   p2 := &comment.Comment{Comment: "something", Author: "Not Me", UserAgent: "/something"}
+func TestCommentImportJSON(t *testing.T) {
+   p1 := &model.Comment{Comment: "Test Post", Author: "Me"}
+   p2 := &model.Comment{Comment: "something", Author: "Not Me", UserAgent: "/something"}
    b := p1.ExportJSON()
    if fmt.Sprintf("%s", p1) == fmt.Sprintf("%s", p2) {
       t.Errorf("'%s' should equal '%s'\n", p1, p2)
@@ -52,10 +52,10 @@ func TestImportJSON(t *testing.T) {
    }
 }
 
-func TestPatchJSON(t *testing.T) {
-   original := &comment.Comment{Comment: "Test Post", Author: "Me"}
-   result := &comment.Comment{Comment: "Test Post", Author: "Me", Id: "something"}
-   patch := &comment.Comment{Id: "something"}
+func TestCommentPatchJSON(t *testing.T) {
+   original := &model.Comment{Comment: "Test Post", Author: "Me"}
+   result := &model.Comment{Comment: "Test Post", Author: "Me", Id: "something"}
+   patch := &model.Comment{Id: "something"}
    b := patch.ExportJSON()
    original.PatchJSON(b)
    if fmt.Sprintf("%s", original) != fmt.Sprintf("%s", result) {
