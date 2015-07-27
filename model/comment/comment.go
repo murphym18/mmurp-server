@@ -2,6 +2,7 @@ package comment
 
 import (
    "time"
+   "encoding/json"
 )
 
 type Comment struct {
@@ -15,23 +16,24 @@ type Comment struct {
    LastModified time.Time `json:"lastModified,omitempty"`
 }
 
-func (self *Post) Touch() {
-   self.LastModified = time.TimeNow()
-   if self.Timestap.IsZero() {
-      self.Timestap = self.LastModified
+func (v *Comment) Touch() {
+   v.LastModified = time.Now()
+   if v.Timestamp.IsZero() {
+      v.Timestamp = v.LastModified
    }
 }
 
-func (v *Comment) ExportJSON() {
+func (v *Comment) ExportJSON() []byte {
    b, _ := json.Marshal(v)
    return b
 }
 
 func (v *Comment) ImportJSON(b []byte) {
-   v* = Post{}
-   _ := json.Unmarshal(b, v)
+   tmp := &Comment{}
+   _ = json.Unmarshal(b, tmp)
+   v = tmp
 }
 
 func (v *Comment) PatchJSON(b []byte) {
-   _ := json.Unmarshal(b, v)
+   _ = json.Unmarshal(b, v)
 }
