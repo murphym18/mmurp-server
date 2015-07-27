@@ -1,9 +1,6 @@
 // Models can be stored in the database and exported as JSON. Anything that can
 // do is a model. Post and Comment.
 type Model interface {
-   // Saves the model to the database
-   Save()
-
    // Returns the JSON represention of this model. This should include an "id"
    // field that db.DataSource could use to fetch it from storage. The bytes are
    // encoded in UTF-8.

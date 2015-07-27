@@ -31,18 +31,29 @@ type DataStore interface {
    // The comment returned will have a valid ID and zero values for any
    // properties omitted in comment argument. if the comment is nil, then a new
    // post is created with a valid ID and zero values for all properties.
-   CreateComment(*model.Post, *model.Comment) *model.Comment
+   CreateComment(*model.PostData, *model.CommentData) *model.Comment
 
    // Saves a post to the database. This is the same as deleting the post,
    // and creating a new post from the parameter argument.
-   SavePost(*mode.Post)
+   SavePost(*mode.PostData)
 
    // Saves a comment to the database (behavior like SavePost).
-   SaveComment(*model.Comment)
+   SaveComment(*model.CommentData)
 
    // Deletes a post permanently. This also deletes its comments.
-   DeletePost(*model.Post)
+   DeletePost(*model.PostData)
 
    // Deletes a comment permanently.
-   DeleteComment(*model.Comment)
+   DeleteComment(*model.CommentData)
+}
+
+type Database interface {
+   DataSource
+   DataStore
+}
+
+var providers = make(map[string]driver.Driver)
+
+func GetInstance(name string) Database {
+
 }
