@@ -4,7 +4,7 @@ import (
    "encoding/json"
    "fmt"
    "testing"
-   "../model"
+   "server/model"
 )
 
 func TestCommentTouch(t *testing.T) {

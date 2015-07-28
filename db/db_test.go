@@ -2,7 +2,7 @@ package db_test
 
 import (
    "testing"
-   "../db"
+   "server/db"
 )
 
 func TestDatabase(t *testing.T) {

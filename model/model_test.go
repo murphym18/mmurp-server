@@ -2,7 +2,7 @@ package model_test
 
 import (
    "testing"
-   "../model"
+   "server/model"
 )
 
 func TestCastingToModel(t *testing.T) {

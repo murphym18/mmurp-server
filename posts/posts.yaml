@@ -1,5 +1,0 @@
-handlers:
-- url: "/posts/sign/?"
-  script: _go_app
-- url: "/posts/?"
-  script: _go_app

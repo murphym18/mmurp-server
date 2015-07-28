@@ -2,7 +2,7 @@ package app_test
 
 import (
    "testing"
-   "../app"
+   "server/app"
 )
 
 func TestApp(t *testing.T) {

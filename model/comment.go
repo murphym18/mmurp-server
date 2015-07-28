@@ -6,7 +6,7 @@ import (
 )
 
 type Comment struct {
-   Id string `json:"id"`
+   Id string `appengine:"-" json:"id"`
    PostId string `json:"-"`
    Author string `json:"author,omitempty"`
    Comment string `json:"comment,omitempty"`

@@ -6,7 +6,7 @@ import (
 )
 
 type Post struct {
-   Id string `json:"id,omitempty"`
+   Id string `appengine:"-" json:"id,omitempty"`
    Author string `json:"author,omitempty"`
    URL string `json:"url,omitempty"`
    Public bool `json:"-"`

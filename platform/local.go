@@ -1,31 +1,55 @@
 // This adapts standard libs to the app's API.
-package local
+// +build !appengine
+
+package platform
 
 import (
-   "../../db"
-   "../../util"
-   "../../model"
+   "server/db"
+   "server/util"
+   "server/model"
    "log"
-   "io"
+   "os"
+   "fmt"
    "net/http"
 )
 
+type LocalLogger struct {
+   out *log.Logger
+}
+
+func (g *LocalLogger) Debugf(format string, args ...interface{}) {
+   g.out.Printf(fmt.Sprintf(format, args...))
+}
+func (g *LocalLogger) Infof(format string, args ...interface{}) {
+   g.out.Printf(fmt.Sprintf(format, args...))
+}
+func (g *LocalLogger) Warningf(format string, args ...interface{}) {
+   g.out.Printf(fmt.Sprintf(format, args...))
+}
+func (g *LocalLogger) Errorf(format string, args ...interface{}) {
+   g.out.Printf(fmt.Sprintf(format, args...))
+}
+func (g *LocalLogger) Criticalf(format string, args ...interface{}) {
+   g.out.Printf(fmt.Sprintf(format, args...))
+}
+
 type LocalDatabase struct {
+   out *LocalLogger
 }
 
 // Loads all posts from the database sorted by date (newest first)
 func (g *LocalDatabase) GetPosts() []model.Post {
-   return nil
+   return make([]model.Post, 0)
 }
 
 // Loads all comments for a post sorted by date (newest first)
-func (g *LocalDatabase) GetComments(v model.Post) []model.Comment {
+func (g *LocalDatabase) GetComments(v *model.Post) []model.Comment {
    return nil
 }
 
 // Loads a post by ID. Returns nil if it doesn't exist.
 func (g *LocalDatabase) GetPost(id string) *model.Post {
-   return nil
+   return &model.Post{Id: id}
 }
 
 // Loads a comment by ID. Returns nil if it doesn't exist.
@@ -75,5 +99,6 @@ func (g *LocalDatabase) DeleteComment(v *model.Comment) {
 
 func GetDependencies(r *http.Request) (db.Database, util.Logger) {
    // c := appengine.NewContext(r)
-   return new(LocalDatabase), nil//log.New(io.Std, "", 0)
+   l := &LocalLogger{log.New(os.Stdout, "", 0)}
+   return &LocalDatabase{l}, l
 }
