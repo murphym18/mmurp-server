@@ -4,7 +4,9 @@
 package platform
 
 import (
+   "time"
    "net/http"
+   "reflect"
    "strconv"
    "server/db"
    "server/util"
@@ -12,6 +14,9 @@ import (
    "appengine"
    "appengine/datastore"
 )
+
+const limit_query_posts int = 25
+const limit_query_comments int = 25
 
 func GetDependencies(r *http.Request) (db.Database, util.Logger) {
    c := appengine.NewContext(r)
@@ -22,48 +27,45 @@ type gapDatabase struct {
    c appengine.Context
 }
 
-// Loads all posts from the database sorted by date (newest first)
-func (g *gapDatabase) GetPosts() []model.Post {
-   q := datastore.NewQuery("Post").Order("-Timestamp").Limit(50)
-   buf := make([]model.Post, 50)
-   keys, err := q.GetAll(g.c, &buf)
+func (g *gapDatabase) getKeyString(key *datastore.Key) string {
+   if tmp := key.IntID(); tmp != 0 {
+      return strconv.FormatInt(tmp, 10)
+   } else {
+      return key.StringID()
+   }
+}
+
+func (g* gapDatabase) handleError(err error, msg string) {
    if err != nil {
-      g.c.Errorf("Error loading all posts\n%s\n", err.Error())
-      return make([]model.Post, 0)
+      g.c.Errorf("%s\n%s\n", msg, err.Error())
    }
+}
+
+func (g *gapDatabase) setModelIds(models interface{}, keys []*datastore.Key)  {
+   arr := reflect.ValueOf(models)
    for i, key := range keys {
-      if tmp := key.IntID(); tmp != 0 {
-         buf[i].Id = strconv.FormatInt(tmp, 10)
-      } else {
-         buf[i].Id = key.StringID()
-      }
+      arr.Index(i).FieldByName("Id").SetString(g.getKeyString(key))
    }
-   if len(keys) > 0 {
-      return buf
-   }
-   return make([]model.Post, 0)
+}
+
+// Loads all posts from the database sorted by date (newest first)
+func (g *gapDatabase) GetPosts() (res []model.Post) {
+   q := datastore.NewQuery("Post").Order("-Timestamp").Limit(limit_query_posts)
+   res = make([]model.Post, limit_query_posts)
+   keys, err := q.GetAll(g.c, &res)
+   g.handleError(err, "GetPosts returned an error.")
+   g.setModelIds(res, keys)
+   return res[:len(keys)]
 }
 
 // Loads all comments for a post sorted by date (newest first)
-func (g *gapDatabase) GetComments(v *model.Post) []model.Comment {
-   q := datastore.NewQuery("Comment").Order("-Timestamp").Limit(50)
-   buf := make([]model.Post, 50)
-   keys, err := q.GetAll(g.c, &buf)
-   if err != nil {
-      g.c.Errorf("Error loading all posts\n%s\n", err.Error())
-      return make([]model.Comment, 0)
-   }
-   if len(keys) < 1 {
-      return make([]model.Comment, 0)
-   }
-   for i, key := range keys {
-      if tmp := key.IntID(); tmp != 0 {
-         buf[i].Id = strconv.FormatInt(tmp, 10)
-      } else {
-         buf[i].Id = key.StringID()
-      }
-   }
-   return nil
+func (g *gapDatabase) GetComments(postId string) (res []model.Comment) {
+   q := datastore.NewQuery("Comment").Ancestor(g.getPostId(postId)).Order("-Timestamp").Limit(limit_query_comments)
+   res = make([]model.Comment, limit_query_comments)
+   keys, err := q.GetAll(g.c, &res)
+   g.handleError(err, "GetPosts returned an error.")
+   g.setModelIds(res, keys)
+   return res[:len(keys)]
 }
 
 // Loads a post by ID. Returns nil if it doesn't exist.
@@ -88,6 +90,19 @@ func (g *gapDatabase) GetPost(id string) *model.Post {
    return post
 }
 
+func (g *gapDatabase) getPostId(id string) *datastore.Key {
+   var num int64
+   var kerr error
+   var key *datastore.Key
+   num, kerr = strconv.ParseInt(id, 10, 64)
+   if kerr == nil {
+      key = datastore.NewKey(g.c, "Post", "", num, nil)
+   } else {
+      key = datastore.NewKey(g.c, "Post", id, 0, nil)
+   }
+   return key
+}
+
 // Loads a comment by ID. Returns nil if it doesn't exist.
 func (g *gapDatabase) GetComment(id string) *model.Comment {
    return nil
@@ -98,7 +113,20 @@ func (g *gapDatabase) GetComment(id string) *model.Comment {
 // then a new post is created with a valid ID and zero values for all
 // properties.
 func (g *gapDatabase) CreatePost(v *model.Post) *model.Post {
-   return nil
+   if v == nil {
+      v = &model.Post{}
+   }
+   v.LastModified = time.Now()
+   if v.Timestamp.IsZero() {
+      v.Timestamp = v.LastModified
+   }
+   key, err := datastore.Put(g.c, datastore.NewIncompleteKey(g.c, "Post", nil), v)
+   if err != nil {
+      g.c.Errorf("Error creating a post\n%s\n", err.Error())
+      return nil
+   }
+   v.Id = g.getKeyString(key)
+   return v
 }
 
 // Creates an empty comment in the database. The argument specifies what post
@@ -106,7 +134,7 @@ func (g *gapDatabase) CreatePost(v *model.Post) *model.Post {
 // The comment returned will have a valid ID and zero values for any
 // properties omitted in comment argument. if the comment is nil, then a new
 // post is created with a valid ID and zero values for all properties.
-func (g *gapDatabase) CreateComment(p *model.Post, c *model.Comment) *model.Comment {
+func (g *gapDatabase) CreateComment(p string, c *model.Comment) *model.Comment {
    return nil
 }
 

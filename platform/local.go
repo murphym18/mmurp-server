@@ -43,7 +43,7 @@ func (g *LocalDatabase) GetPosts() []model.Post {
 }
 
 // Loads all comments for a post sorted by date (newest first)
-func (g *LocalDatabase) GetComments(v *model.Post) []model.Comment {
+func (g *LocalDatabase) GetComments(string) []model.Comment {
    return nil
 }
 

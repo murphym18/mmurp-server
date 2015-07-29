@@ -10,7 +10,7 @@ type DataSource interface {
    GetPosts() []model.Post
 
    // Loads all comments for a post sorted by date (newest first)
-   GetComments(model.Post) []model.Comment
+   GetComments(string) []model.Comment
 
    // Loads a post by ID. Returns nil if it doesn't exist.
    GetPost(string) *model.Post
@@ -32,7 +32,7 @@ type DataStore interface {
    // The comment returned will have a valid ID and zero values for any
    // properties omitted in comment argument. if the comment is nil, then a new
    // post is created with a valid ID and zero values for all properties.
-   CreateComment(*model.Post, *model.Comment) *model.Comment
+   CreateComment(string, *model.Comment) *model.Comment
 
    // Saves a post to the database. This is the same as deleting the post,
    // and creating a new post from parameter. Note the the post should have a
@@ -55,7 +55,7 @@ type Database interface {
 GetPosts() []model.Post
 
 // Loads all comments for a post sorted by date (newest first)
-GetComments(*model.Post) []model.Comment
+GetComments(string) []model.Comment
 
 // Loads a post by ID. Returns nil if it doesn't exist.
 GetPost(string) *model.Post
@@ -73,7 +73,7 @@ GetComment(string) *model.Comment
    // The comment returned will have a valid ID and zero values for any
    // properties omitted in comment argument. if the comment is nil, then a new
    // post is created with a valid ID and zero values for all properties.
-   CreateComment(*model.Post, *model.Comment) *model.Comment
+   CreateComment(string, *model.Comment) *model.Comment
 
    // Saves a post to the database. This is the same as deleting the post,
    // and creating a new post from parameter. Note the the post should have a

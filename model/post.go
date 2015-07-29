@@ -12,8 +12,8 @@ type Post struct {
    Public bool `json:"-"`
    Title string `json:"title,omitempty"`
    Description string `json:"description,omitempty"`
-   Timestamp time.Time `json:"timestap,omitempty"`
-   LastModified time.Time `json:"lastModified,omitempty"`
+   Timestamp time.Time `json:"timestamp"`
+   LastModified time.Time `json:"lastModified"`
 }
 
 func (post *Post) Touch() {
